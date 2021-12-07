@@ -12,7 +12,10 @@ use webots_bindings::{
 
 pub use webots_bindings::WbRobotMode;
 
-use crate::{Accelerometer, Camera, DistanceSensor, Gyro, InertialUnit, Keyboard, TouchSensor};
+use crate::{
+    Accelerometer, Brake, Camera, DistanceSensor, Gyro, InertialUnit, Keyboard, Motor,
+    PositionSensor, TouchSensor,
+};
 
 pub struct Robot;
 
@@ -134,6 +137,12 @@ impl Robot {
         Accelerometer::new(device)
     }
 
+    pub fn get_brake(name: &str) -> Brake {
+        let name = CString::new(name).expect("CString::new failed");
+        let device = unsafe { wb_robot_get_device(name.as_ptr()) };
+        Brake::new(device)
+    }
+
     pub fn get_camera(name: &str) -> Camera {
         let name = CString::new(name).expect("CString::new failed");
         let device = unsafe { wb_robot_get_device(name.as_ptr()) };
@@ -160,6 +169,18 @@ impl Robot {
 
     pub fn get_keyboard() -> Keyboard {
         Keyboard
+    }
+
+    pub fn get_motor(name: &str) -> Motor {
+        let name = CString::new(name).expect("CString::new failed");
+        let device = unsafe { wb_robot_get_device(name.as_ptr()) };
+        Motor::new(device)
+    }
+
+    pub fn get_position_sensor(name: &str) -> PositionSensor {
+        let name = CString::new(name).expect("CString::new failed");
+        let device = unsafe { wb_robot_get_device(name.as_ptr()) };
+        PositionSensor::new(device)
     }
 
     pub fn get_touch_sensor(name: &str) -> TouchSensor {
