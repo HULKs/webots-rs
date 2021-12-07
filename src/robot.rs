@@ -10,7 +10,7 @@ use webots_bindings::{
     wb_robot_step, WbRobotMode,
 };
 
-use crate::{Accelerometer, Camera, Gyro};
+use crate::{Accelerometer, Camera, Gyro, InertialUnit};
 
 pub struct Robot;
 
@@ -142,5 +142,11 @@ impl Robot {
         let name = CString::new(name).expect("CString::new failed");
         let device = unsafe { wb_robot_get_device(name.as_ptr()) };
         Gyro::new(device)
+    }
+
+    pub fn get_inertial_unit(name: &str) -> InertialUnit {
+        let name = CString::new(name).expect("CString::new failed");
+        let device = unsafe { wb_robot_get_device(name.as_ptr()) };
+        InertialUnit::new(device)
     }
 }

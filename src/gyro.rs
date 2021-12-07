@@ -40,10 +40,14 @@ impl Gyro {
         }
     }
 
-    pub fn get_values(&self) -> &[f64] {
+    pub fn get_values(&self) -> [f64; 3] {
         unsafe {
             let values = wb_gyro_get_values(self.0);
-            from_raw_parts(values, 3)
+            [
+                *values.offset(0),
+                *values.offset(1),
+                *values.offset(2),
+            ]
         }
     }
 }
