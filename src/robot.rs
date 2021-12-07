@@ -7,12 +7,12 @@ use webots_bindings::{
     wb_robot_get_mode, wb_robot_get_model, wb_robot_get_name, wb_robot_get_project_path,
     wb_robot_get_supervisor, wb_robot_get_synchronization, wb_robot_get_time, wb_robot_get_urdf,
     wb_robot_get_world_path, wb_robot_init, wb_robot_set_custom_data, wb_robot_set_mode,
-    wb_robot_step, WbRobotMode,
+    wb_robot_step,
 };
 
 use crate::{
     Accelerometer, Brake, Camera, DistanceSensor, Gyro, InertialUnit, Keyboard, Motor,
-    PositionSensor, TouchSensor,
+    PositionSensor, RobotMode, TouchSensor,
 };
 
 pub struct Robot;
@@ -78,13 +78,13 @@ impl Robot {
         unsafe { wb_robot_set_custom_data(custom_data.as_ptr()) }
     }
 
-    pub fn get_mode() -> WbRobotMode {
-        unsafe { wb_robot_get_mode() }
+    pub fn get_mode() -> RobotMode {
+        unsafe { wb_robot_get_mode().into() }
     }
 
-    pub fn set_mode(mode: WbRobotMode, argument: &str) {
+    pub fn set_mode(mode: RobotMode, argument: &str) {
         let argument = CString::new(argument).expect("CString::new failed");
-        unsafe { wb_robot_set_mode(mode, argument.as_ptr()) }
+        unsafe { wb_robot_set_mode(mode.into(), argument.as_ptr()) }
     }
 
     pub fn get_synchronization() -> bool {

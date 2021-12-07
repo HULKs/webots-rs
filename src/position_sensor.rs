@@ -2,10 +2,10 @@ use webots_bindings::{
     wb_device_get_node_type, wb_position_sensor_disable, wb_position_sensor_enable,
     wb_position_sensor_get_brake, wb_position_sensor_get_motor,
     wb_position_sensor_get_sampling_period, wb_position_sensor_get_type,
-    wb_position_sensor_get_value, WbDeviceTag, WbJointType, WbNodeType_WB_NODE_POSITION_SENSOR,
+    wb_position_sensor_get_value, WbDeviceTag, WbNodeType_WB_NODE_POSITION_SENSOR,
 };
 
-use crate::{Brake, Motor};
+use crate::{Brake, JointType, Motor};
 
 pub struct PositionSensor(WbDeviceTag);
 
@@ -33,8 +33,8 @@ impl PositionSensor {
         unsafe { wb_position_sensor_get_value(self.0) }
     }
 
-    pub fn get_type(&self) -> WbJointType {
-        unsafe { wb_position_sensor_get_type(self.0) }
+    pub fn get_type(&self) -> JointType {
+        unsafe { wb_position_sensor_get_type(self.0).into() }
     }
 
     pub fn get_motor(&self) -> Motor {

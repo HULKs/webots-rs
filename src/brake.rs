@@ -1,10 +1,9 @@
 use webots_bindings::{
     wb_brake_get_motor, wb_brake_get_position_sensor, wb_brake_get_type,
-    wb_brake_set_damping_constant, wb_device_get_node_type, WbDeviceTag, WbJointType,
-    WbNodeType_WB_NODE_BRAKE,
+    wb_brake_set_damping_constant, wb_device_get_node_type, WbDeviceTag, WbNodeType_WB_NODE_BRAKE,
 };
 
-use crate::{Motor, PositionSensor};
+use crate::{JointType, Motor, PositionSensor};
 
 pub struct Brake(WbDeviceTag);
 
@@ -20,8 +19,8 @@ impl Brake {
         unsafe { wb_brake_set_damping_constant(self.0, damping_constant) }
     }
 
-    pub fn get_type(&self) -> WbJointType {
-        unsafe { wb_brake_get_type(self.0) }
+    pub fn get_type(&self) -> JointType {
+        unsafe { wb_brake_get_type(self.0).into() }
     }
 
     pub fn get_motor(&self) -> Motor {

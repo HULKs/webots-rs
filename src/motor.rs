@@ -9,11 +9,11 @@ use webots_bindings::{
     wb_motor_get_torque_feedback_sampling_period, wb_motor_get_type, wb_motor_get_velocity,
     wb_motor_set_acceleration, wb_motor_set_available_force, wb_motor_set_available_torque,
     wb_motor_set_control_pid, wb_motor_set_force, wb_motor_set_position, wb_motor_set_torque,
-    wb_motor_set_velocity, WbDeviceTag, WbJointType, WbNodeType_WB_NODE_LINEAR_MOTOR,
+    wb_motor_set_velocity, WbDeviceTag, WbNodeType_WB_NODE_LINEAR_MOTOR,
     WbNodeType_WB_NODE_ROTATIONAL_MOTOR,
 };
 
-use crate::{Brake, PositionSensor};
+use crate::{Brake, JointType, PositionSensor};
 
 pub struct Motor(WbDeviceTag);
 
@@ -91,8 +91,8 @@ impl Motor {
         unsafe { wb_motor_get_torque_feedback(self.0) }
     }
 
-    pub fn get_type(&self) -> WbJointType {
-        unsafe { wb_motor_get_type(self.0) }
+    pub fn get_type(&self) -> JointType {
+        unsafe { wb_motor_get_type(self.0).into() }
     }
 
     pub fn get_target_position(&self) -> f64 {

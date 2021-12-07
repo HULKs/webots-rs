@@ -4,8 +4,10 @@ use webots_bindings::{
     wb_device_get_node_type, wb_touch_sensor_disable, wb_touch_sensor_enable,
     wb_touch_sensor_get_lookup_table, wb_touch_sensor_get_lookup_table_size,
     wb_touch_sensor_get_sampling_period, wb_touch_sensor_get_type, wb_touch_sensor_get_value,
-    WbDeviceTag, WbNodeType_WB_NODE_TOUCH_SENSOR, WbTouchSensorType,
+    WbDeviceTag, WbNodeType_WB_NODE_TOUCH_SENSOR,
 };
+
+use crate::TouchSensorType;
 
 pub struct TouchSensor(WbDeviceTag);
 
@@ -45,7 +47,7 @@ impl TouchSensor {
         }
     }
 
-    pub fn get_type(&self) -> WbTouchSensorType {
-        unsafe { wb_touch_sensor_get_type(self.0) }
+    pub fn get_type(&self) -> TouchSensorType {
+        unsafe { wb_touch_sensor_get_type(self.0).into() }
     }
 }

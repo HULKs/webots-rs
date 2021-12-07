@@ -5,9 +5,11 @@ use webots_bindings::{
     wb_distance_sensor_get_aperture, wb_distance_sensor_get_lookup_table,
     wb_distance_sensor_get_lookup_table_size, wb_distance_sensor_get_max_value,
     wb_distance_sensor_get_min_value, wb_distance_sensor_get_sampling_period,
-    wb_distance_sensor_get_type, wb_distance_sensor_get_value, WbDeviceTag, WbDistanceSensorType,
+    wb_distance_sensor_get_type, wb_distance_sensor_get_value, WbDeviceTag,
     WbNodeType_WB_NODE_DISTANCE_SENSOR,
 };
+
+use crate::DistanceSensorType;
 
 pub struct DistanceSensor(WbDeviceTag);
 
@@ -59,7 +61,7 @@ impl DistanceSensor {
         }
     }
 
-    pub fn get_type(&self) -> WbDistanceSensorType {
-        unsafe { wb_distance_sensor_get_type(self.0) }
+    pub fn get_type(&self) -> DistanceSensorType {
+        unsafe { wb_distance_sensor_get_type(self.0).into() }
     }
 }
