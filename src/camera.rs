@@ -12,16 +12,13 @@ use webots_bindings::{
     wb_camera_recognition_get_segmentation_image, wb_camera_recognition_has_segmentation,
     wb_camera_recognition_is_segmentation_enabled, wb_camera_recognition_save_segmentation_image,
     wb_camera_save_image, wb_camera_set_exposure, wb_camera_set_focal_distance, wb_camera_set_fov,
-    wb_device_get_node_type, wb_robot_get_device, WbCameraRecognitionObject, WbDeviceTag,
-    WbNodeType_WB_NODE_CAMERA,
+    wb_device_get_node_type, WbCameraRecognitionObject, WbDeviceTag, WbNodeType_WB_NODE_CAMERA,
 };
 
 pub struct Camera(WbDeviceTag);
 
 impl Camera {
-    pub fn new(name: &str) -> Self {
-        let name = CString::new(name).expect("CString::new failed");
-        let device = unsafe { wb_robot_get_device(name.as_ptr()) };
+    pub(crate) fn new(device: WbDeviceTag) -> Self {
         assert_eq!(WbNodeType_WB_NODE_CAMERA, unsafe {
             wb_device_get_node_type(device)
         });
