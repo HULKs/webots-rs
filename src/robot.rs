@@ -10,7 +10,7 @@ use webots_bindings::{
     wb_robot_step, WbRobotMode,
 };
 
-use crate::Camera;
+use crate::{Accelerometer, Camera};
 
 pub struct Robot;
 
@@ -130,5 +130,11 @@ impl Robot {
         let name = CString::new(name).expect("CString::new failed");
         let device = unsafe { wb_robot_get_device(name.as_ptr()) };
         Camera::new(device)
+    }
+
+    pub fn get_accelerometer(name: &str) -> Accelerometer {
+        let name = CString::new(name).expect("CString::new failed");
+        let device = unsafe { wb_robot_get_device(name.as_ptr()) };
+        Accelerometer::new(device)
     }
 }
