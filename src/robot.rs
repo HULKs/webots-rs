@@ -10,7 +10,7 @@ use webots_bindings::{
     wb_robot_step, WbRobotMode,
 };
 
-use crate::{Accelerometer, Camera};
+use crate::{Accelerometer, Camera, Gyro};
 
 pub struct Robot;
 
@@ -126,15 +126,21 @@ impl Robot {
         unsafe { wb_robot_battery_sensor_get_value() }
     }
 
+    pub fn get_accelerometer(name: &str) -> Accelerometer {
+        let name = CString::new(name).expect("CString::new failed");
+        let device = unsafe { wb_robot_get_device(name.as_ptr()) };
+        Accelerometer::new(device)
+    }
+
     pub fn get_camera(name: &str) -> Camera {
         let name = CString::new(name).expect("CString::new failed");
         let device = unsafe { wb_robot_get_device(name.as_ptr()) };
         Camera::new(device)
     }
 
-    pub fn get_accelerometer(name: &str) -> Accelerometer {
+    pub fn get_gyro(name: &str) -> Gyro {
         let name = CString::new(name).expect("CString::new failed");
         let device = unsafe { wb_robot_get_device(name.as_ptr()) };
-        Accelerometer::new(device)
+        Gyro::new(device)
     }
 }
