@@ -12,8 +12,10 @@ use webots_bindings::{
     wb_camera_recognition_get_segmentation_image, wb_camera_recognition_has_segmentation,
     wb_camera_recognition_is_segmentation_enabled, wb_camera_recognition_save_segmentation_image,
     wb_camera_save_image, wb_camera_set_exposure, wb_camera_set_focal_distance, wb_camera_set_fov,
-    wb_device_get_node_type, WbCameraRecognitionObject, WbDeviceTag, WbNodeType_WB_NODE_CAMERA,
+    wb_device_get_node_type, WbDeviceTag, WbNodeType_WB_NODE_CAMERA,
 };
+
+pub use webots_bindings::WbCameraRecognitionObject;
 
 pub struct Camera(WbDeviceTag);
 

@@ -7,8 +7,10 @@ use webots_bindings::{
     wb_robot_get_mode, wb_robot_get_model, wb_robot_get_name, wb_robot_get_project_path,
     wb_robot_get_supervisor, wb_robot_get_synchronization, wb_robot_get_time, wb_robot_get_urdf,
     wb_robot_get_world_path, wb_robot_init, wb_robot_set_custom_data, wb_robot_set_mode,
-    wb_robot_step, WbRobotMode,
+    wb_robot_step,
 };
+
+pub use webots_bindings::WbRobotMode;
 
 use crate::{Accelerometer, Camera, DistanceSensor, Gyro, InertialUnit, Keyboard, TouchSensor};
 

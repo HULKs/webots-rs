@@ -4,8 +4,10 @@ use webots_bindings::{
     wb_device_get_node_type, wb_touch_sensor_disable, wb_touch_sensor_enable,
     wb_touch_sensor_get_lookup_table, wb_touch_sensor_get_lookup_table_size,
     wb_touch_sensor_get_sampling_period, wb_touch_sensor_get_type, wb_touch_sensor_get_value,
-    WbDeviceTag, WbNodeType_WB_NODE_TOUCH_SENSOR, WbTouchSensorType,
+    WbDeviceTag, WbNodeType_WB_NODE_TOUCH_SENSOR,
 };
+
+pub use webots_bindings::WbTouchSensorType;
 
 pub struct TouchSensor(WbDeviceTag);
 
