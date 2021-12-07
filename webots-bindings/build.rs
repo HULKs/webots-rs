@@ -1,5 +1,4 @@
-use std::env;
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 
 static WEBOTS_LINUX_PATH: &'static str = "/usr/local/webots";
 static WEBOTS_MACOS_PATH: &'static str = "/Applications/Webots.app";
@@ -38,10 +37,10 @@ fn main() {
         .blocklist_item("FP_SUBNORMAL")
         .blocklist_item("FP_ZERO")
         .generate()
-        .expect("Unable to generate bindings");
+        .expect("Failed to generate bindings");
 
-    let out_path = PathBuf::from("src");
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings
-        .write_to_file(out_path.join("bindings.rs"))
-        .expect("Unable to write bindings");
+        .write_to_file(out_path.join("webots_bindings.rs"))
+        .expect("Failed to write bindings");
 }

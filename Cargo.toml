@@ -1,7 +1,12 @@
 [package]
+edition = "2021"
 name = "webots-rs"
 version = "0.1.0"
-edition = "2021"
 
-[build-dependencies]
-bindgen = "0.59"
+[dependencies]
+webots-bindings = {path = "webots-bindings"}
+
+[workspaces]
+members = [
+  "webots-bindings",
+]
