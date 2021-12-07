@@ -1,4 +1,5 @@
-/target
+target/
+Cargo.lock
 src/bindings.rs
 /sample_project/controllers/rust_controller/rust_controller
 .*.wbproj
