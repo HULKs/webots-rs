@@ -9,6 +9,7 @@ mod joint_type;
 mod keyboard;
 mod motor;
 mod position_sensor;
+mod recognition;
 mod robot;
 mod robot_mode;
 mod touch_sensor;
@@ -25,13 +26,13 @@ pub use joint_type::JointType;
 pub use keyboard::Keyboard;
 pub use motor::Motor;
 pub use position_sensor::PositionSensor;
+pub use recognition::{Recognition, RecognitionObject};
 pub use robot::Robot;
 pub use robot_mode::RobotMode;
 pub use touch_sensor::TouchSensor;
 pub use touch_sensor_type::TouchSensorType;
 
 pub use webots_bindings::{
-    WbCameraRecognitionObject,
     WB_KEYBOARD_ALT, WB_KEYBOARD_CONTROL, WB_KEYBOARD_DOWN, WB_KEYBOARD_END, WB_KEYBOARD_HOME,
     WB_KEYBOARD_KEY, WB_KEYBOARD_LEFT, WB_KEYBOARD_NUMPAD_DOWN, WB_KEYBOARD_NUMPAD_END,
     WB_KEYBOARD_NUMPAD_HOME, WB_KEYBOARD_NUMPAD_LEFT, WB_KEYBOARD_NUMPAD_RIGHT,

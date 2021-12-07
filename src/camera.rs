@@ -5,15 +5,12 @@ use webots_bindings::{
     wb_camera_get_focal_length, wb_camera_get_fov, wb_camera_get_height, wb_camera_get_image,
     wb_camera_get_max_focal_distance, wb_camera_get_max_fov, wb_camera_get_min_focal_distance,
     wb_camera_get_min_fov, wb_camera_get_near, wb_camera_get_sampling_period, wb_camera_get_width,
-    wb_camera_has_recognition, wb_camera_recognition_disable,
-    wb_camera_recognition_disable_segmentation, wb_camera_recognition_enable,
-    wb_camera_recognition_enable_segmentation, wb_camera_recognition_get_number_of_objects,
-    wb_camera_recognition_get_objects, wb_camera_recognition_get_sampling_period,
-    wb_camera_recognition_get_segmentation_image, wb_camera_recognition_has_segmentation,
-    wb_camera_recognition_is_segmentation_enabled, wb_camera_recognition_save_segmentation_image,
-    wb_camera_save_image, wb_camera_set_exposure, wb_camera_set_focal_distance, wb_camera_set_fov,
-    wb_device_get_node_type, WbCameraRecognitionObject, WbDeviceTag, WbNodeType_WB_NODE_CAMERA,
+    wb_camera_has_recognition, wb_camera_save_image, wb_camera_set_exposure,
+    wb_camera_set_focal_distance, wb_camera_set_fov, wb_device_get_node_type, WbDeviceTag,
+    WbNodeType_WB_NODE_CAMERA,
 };
+
+use crate::Recognition;
 
 pub struct Camera(WbDeviceTag);
 
@@ -111,57 +108,7 @@ impl Camera {
         unsafe { wb_camera_has_recognition(self.0) != 0 }
     }
 
-    pub fn recognition_enable(&self, sampling_period: i32) {
-        unsafe { wb_camera_recognition_enable(self.0, sampling_period) }
-    }
-
-    pub fn recognition_disable(&self) {
-        unsafe { wb_camera_recognition_disable(self.0) }
-    }
-
-    pub fn recognition_get_sampling_period(&self) -> i32 {
-        unsafe { wb_camera_recognition_get_sampling_period(self.0) }
-    }
-
-    pub fn recognition_get_number_of_objects(&self) -> i32 {
-        unsafe { wb_camera_recognition_get_number_of_objects(self.0) }
-    }
-
-    pub fn recognition_get_objects(&self) -> &[WbCameraRecognitionObject] {
-        let number_of_objects = self.recognition_get_number_of_objects();
-        unsafe {
-            let objects = wb_camera_recognition_get_objects(self.0);
-            from_raw_parts(objects, number_of_objects as usize)
-        }
-    }
-
-    pub fn recognition_has_segmentation(&self) -> bool {
-        unsafe { wb_camera_recognition_has_segmentation(self.0) != 0 }
-    }
-
-    pub fn recognition_enable_segmentation(&self) {
-        unsafe { wb_camera_recognition_enable_segmentation(self.0) }
-    }
-
-    pub fn recognition_disable_segmentation(&self) {
-        unsafe { wb_camera_recognition_disable_segmentation(self.0) }
-    }
-
-    pub fn recognition_is_segmentation_enabled(&self) -> bool {
-        unsafe { wb_camera_recognition_is_segmentation_enabled(self.0) != 0 }
-    }
-
-    pub fn recognition_get_segmentation_image(&self) -> &[u8] {
-        let width = self.get_width();
-        let height = self.get_height();
-        unsafe {
-            let image = wb_camera_recognition_get_segmentation_image(self.0);
-            from_raw_parts(image, (width * height * 4) as usize)
-        }
-    }
-
-    pub fn recognition_save_segmentation_image(&self, filename: &str, quality: i32) -> i32 {
-        let filename = CString::new(filename).expect("CString::new failed");
-        unsafe { wb_camera_recognition_save_segmentation_image(self.0, filename.as_ptr(), quality) }
+    pub fn get_recognition(&self) -> Recognition {
+        Recognition::new(self.0)
     }
 }
