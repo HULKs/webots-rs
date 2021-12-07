@@ -1,9 +1,8 @@
 use webots_bindings::{
     wb_brake_get_motor, wb_brake_get_position_sensor, wb_brake_get_type,
-    wb_brake_set_damping_constant, wb_device_get_node_type, WbDeviceTag, WbNodeType_WB_NODE_BRAKE,
+    wb_brake_set_damping_constant, wb_device_get_node_type, WbDeviceTag, WbJointType,
+    WbNodeType_WB_NODE_BRAKE,
 };
-
-pub use webots_bindings::WbJointType;
 
 use crate::{Motor, PositionSensor};
 
