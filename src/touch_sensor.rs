@@ -4,7 +4,7 @@ use webots_bindings::{
     wb_device_get_node_type, wb_touch_sensor_disable, wb_touch_sensor_enable,
     wb_touch_sensor_get_lookup_table, wb_touch_sensor_get_lookup_table_size,
     wb_touch_sensor_get_sampling_period, wb_touch_sensor_get_type, wb_touch_sensor_get_value,
-    WbDeviceTag, WbNodeType_WB_NODE_TOUCH_SENSOR,
+    wb_touch_sensor_get_values, WbDeviceTag, WbNodeType_WB_NODE_TOUCH_SENSOR,
 };
 
 use crate::TouchSensorType;
@@ -33,6 +33,13 @@ impl TouchSensor {
 
     pub fn get_value(&self) -> f64 {
         unsafe { wb_touch_sensor_get_value(self.0) }
+    }
+
+    pub fn get_values(&self) -> [f64; 3] {
+        unsafe {
+            let values = wb_touch_sensor_get_values(self.0);
+            [*values.offset(0), *values.offset(1), *values.offset(2)]
+        }
     }
 
     pub fn get_lookup_table_size(&self) -> i32 {
