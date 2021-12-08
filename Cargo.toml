@@ -1,6 +1,6 @@
 [package]
 edition = "2021"
-name = "webots-rs"
+name = "webots"
 version = "0.1.0"
 
 [dependencies]
