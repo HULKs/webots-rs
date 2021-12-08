@@ -36,7 +36,14 @@ impl Keyboard {
         unsafe { wb_keyboard_get_sampling_period() }
     }
 
-    pub fn get_key(&self) -> u32 {
-        unsafe { wb_keyboard_get_key() as u32 }
+    pub fn get_key(&self) -> Option<u32> {
+        unsafe {
+            let key = wb_keyboard_get_key();
+            if key == -1 {
+                None
+            } else {
+                Some(key as u32)
+            }
+        }
     }
 }
