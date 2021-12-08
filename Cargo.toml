@@ -1,12 +1,10 @@
 [package]
+description = "Webots bindings for Rust"
 edition = "2021"
+homepage = "https://github.com/HULKs/webots-rs"
+license = "MIT"
 name = "webots"
-version = "0.1.0"
+version = "0.1.2"
 
 [dependencies]
-webots-bindings = {path = "webots-bindings"}
-
-[workspace]
-members = [
-  "webots-bindings",
-]
+webots-bindings = {path = "webots-bindings", version = "0.1.1"}

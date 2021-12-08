@@ -1,7 +1,11 @@
 [package]
-name = "webots-bindings"
-version = "0.1.0"
+description = "Webots bindings for Rust"
 edition = "2021"
+homepage = "https://github.com/HULKs/webots-rs"
+license = "MIT"
+name = "webots-bindings"
+version = "0.1.1"
 
 [build-dependencies]
 bindgen = "0.59"
+tempfile = "3.2.0"
