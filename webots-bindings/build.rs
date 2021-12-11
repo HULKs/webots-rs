@@ -1,105 +1,56 @@
-use std::{env, fs::create_dir_all, path::PathBuf, process::Command};
+use std::{env, path::PathBuf, process::Command};
 
-use tempfile::Builder;
-
-fn download(url: &String, downloaded_file_path: &PathBuf) {
-    let status = Command::new("wget")
-        .args([
-            "--no-verbose",
-            "--output-document",
-            downloaded_file_path
-                .as_os_str()
-                .to_str()
-                .expect("Failed to convert to str"),
-            url.as_str(),
-        ])
-        .status()
-        .expect("Failed to execute wget process");
-    if !status.success() {
-        panic!("wget process exited with {:?}", status.code());
-    }
-}
-
-fn extract(downloaded_file_path: &PathBuf, target_directory: &PathBuf) {
-    create_dir_all(target_directory).expect("Failed to create target directory");
-    let status = Command::new("tar")
-        .args([
-            "--extract",
-            "--bzip2",
-            "--file",
-            downloaded_file_path
-                .as_os_str()
-                .to_str()
-                .expect("Failed to convert to str"),
-        ])
-        .current_dir(
-            target_directory
-                .as_os_str()
-                .to_str()
-                .expect("Failed to convert to str"),
-        )
-        .status()
-        .expect("Failed to execute tar process");
-    if !status.success() {
-        panic!("tar process exited with {:?}", status.code());
-    }
-}
-
-fn get_webots_path() -> PathBuf {
-    if let Some(path) = env::var("WEBOTS_PATH").ok() {
-        let webots_path = PathBuf::from(&path);
-        if !webots_path.exists() {
-            panic!("Passed WEBOTS_PATH {:?} does not exist.", webots_path);
-        }
-        webots_path
-    } else if cfg!(target_os = "linux") {
-        let webots_path = PathBuf::from("/usr/local/webots");
-        if !webots_path.exists() {
-            println!("cargo:warning=Guessed Webots directory {:?} does not exist and WEBOTS_PATH not set. Downloading...", webots_path);
-            let temporary_directory = Builder::new()
-                .prefix("webots-bindings-")
-                .tempdir()
-                .expect("Failed to create temporary directory");
-            let temporary_directory_path = temporary_directory.into_path();
-            let downloaded_file_path = temporary_directory_path.join("latest.tar.bz2");
-            download(&"https://github.com/cyberbotics/webots/releases/latest/download/webots-R2021b-x86-64.tar.bz2".to_string(), &downloaded_file_path);
-            let target_directory = temporary_directory_path.join("latest");
-            extract(&downloaded_file_path, &target_directory);
-            return target_directory.join("webots");
-        }
-        webots_path
-    } else if cfg!(target_os = "macos") {
-        let webots_path = PathBuf::from("/Applications/Webots.app");
-        if !webots_path.exists() {
-            panic!(
-                "Guessed Webots directory {:?} does not exist and WEBOTS_PATH not set.",
-                webots_path
-            );
-        }
-        webots_path
-    } else if cfg!(target_os = "windows") {
-        let webots_path = PathBuf::from("C:\\Program Files\\Webots");
-        if !webots_path.exists() {
-            panic!(
-                "Guessed Webots directory {:?} does not exist and WEBOTS_PATH not set.",
-                webots_path
-            );
-        }
-        webots_path
-    } else {
-        panic!("Failed to detect OS and WEBOTS_PATH not set.");
-    }
-}
+use walkdir::WalkDir;
 
 fn main() {
-    let webots_path = get_webots_path();
-    let lib_path = PathBuf::from(&webots_path).join("lib/controller");
-    let include_path = PathBuf::from(&webots_path).join("include/controller/c");
+    let status = Command::new("make")
+        .args(["release"])
+        .env("WEBOTS_HOME", "../../..")
+        .current_dir("webots/src/controller/c")
+        .status()
+        .expect("Failed to execute make process");
+    if !status.success() {
+        panic!("make process exited with {:?}", status.code());
+    }
+
+    let lib_path = PathBuf::from("webots").join("lib/controller");
+    let include_path = PathBuf::from("webots").join("include/controller/c");
 
     println!("cargo:rustc-link-search={}", lib_path.display());
     println!("cargo:rustc-link-lib=Controller");
     println!("cargo:rustc-env=LD_LIBRARY_PATH={}", lib_path.display());
     println!("cargo:rerun-if-changed=wrapper.h");
+    for entry in WalkDir::new("webots/include")
+        .into_iter()
+        .filter_map(|entry| entry.ok())
+        .filter_map(|entry| match entry.metadata().ok() {
+            Some(metadata) if metadata.is_file() => Some(entry),
+            _ => None,
+        })
+    {
+        println!("cargo:rerun-if-changed={}", entry.path().display());
+    }
+    for entry in WalkDir::new("webots/resources")
+        .into_iter()
+        .filter_map(|entry| entry.ok())
+        .filter_map(|entry| match entry.metadata().ok() {
+            Some(metadata) if metadata.is_file() => Some(entry),
+            _ => None,
+        })
+    {
+        println!("cargo:rerun-if-changed={}", entry.path().display());
+    }
+    for entry in WalkDir::new("webots/src")
+        .into_iter()
+        .filter_map(|entry| entry.ok())
+        .filter_map(|entry| match entry.metadata().ok() {
+            Some(metadata) if metadata.is_file() => Some(entry),
+            _ => None,
+        })
+        .filter(|entry| !entry.path().starts_with("webots/src/controller/c/build"))
+    {
+        println!("cargo:rerun-if-changed={}", entry.path().display());
+    }
 
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")

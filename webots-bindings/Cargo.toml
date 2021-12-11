@@ -8,4 +8,4 @@ version = "0.1.1"
 
 [build-dependencies]
 bindgen = "0.59"
-tempfile = "3.2.0"
+walkdir = "2.3.2"
