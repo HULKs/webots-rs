@@ -48,21 +48,11 @@ fn main() {
     {
         println!("cargo:rerun-if-changed={}", entry.path().display());
     }
-    for entry in WalkDir::new("stb")
-        .into_iter()
-        .filter_map(|entry| entry.ok())
-        .filter_map(|entry| match entry.metadata().ok() {
-            Some(metadata) if metadata.is_file() => Some(entry),
-            _ => None,
-        })
-    {
-        println!("cargo:rerun-if-changed={}", entry.path().display());
-    }
 
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
-        .clang_args(vec!["-I", "webots/include/controller/c", "-I", "stb"])
+        .clang_args(vec!["-I", "webots/include/controller/c", "-I", "webots/src/stb"])
         .blocklist_item("FP_INFINITE")
         .blocklist_item("FP_NAN")
         .blocklist_item("FP_NORMAL")
