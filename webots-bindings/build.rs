@@ -13,12 +13,9 @@ fn main() {
         panic!("make process exited with {:?}", status.code());
     }
 
-    let lib_path = PathBuf::from("webots").join("lib/controller");
-    let include_path = PathBuf::from("webots").join("include/controller/c");
-
-    println!("cargo:rustc-link-search={}", lib_path.display());
+    println!("cargo:rustc-link-search=webots/lib/controller");
     println!("cargo:rustc-link-lib=Controller");
-    println!("cargo:rustc-env=LD_LIBRARY_PATH={}", lib_path.display());
+    println!("cargo:rustc-env=LD_LIBRARY_PATH=webots/lib/controller");
     println!("cargo:rerun-if-changed=wrapper.h");
     for entry in WalkDir::new("webots/include")
         .into_iter()
@@ -51,11 +48,21 @@ fn main() {
     {
         println!("cargo:rerun-if-changed={}", entry.path().display());
     }
+    for entry in WalkDir::new("stb")
+        .into_iter()
+        .filter_map(|entry| entry.ok())
+        .filter_map(|entry| match entry.metadata().ok() {
+            Some(metadata) if metadata.is_file() => Some(entry),
+            _ => None,
+        })
+    {
+        println!("cargo:rerun-if-changed={}", entry.path().display());
+    }
 
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
-        .clang_args(vec!["-I", include_path.to_str().unwrap()])
+        .clang_args(vec!["-I", "webots/include/controller/c", "-I", "stb"])
         .blocklist_item("FP_INFINITE")
         .blocklist_item("FP_NAN")
         .blocklist_item("FP_NORMAL")
