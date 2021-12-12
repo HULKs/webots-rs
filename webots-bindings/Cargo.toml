@@ -1,7 +1,7 @@
 [package]
 description = "Webots bindings for Rust"
 edition = "2021"
-exclude = ["/webots", "!/webots/Makefile", "!/webots/include", "!/webots/resources/Makefile*", "!/webots/src"]
+exclude = ["/webots", "!/webots/Makefile", "!/webots/include", "!/webots/lib/controller", "!/webots/resources/Makefile*", "!/webots/src"]
 homepage = "https://github.com/HULKs/webots-rs"
 license = "MIT"
 name = "webots-bindings"
