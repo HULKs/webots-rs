@@ -4,7 +4,7 @@ edition = "2021"
 homepage = "https://github.com/HULKs/webots-rs"
 license = "MIT"
 name = "webots"
-version = "0.1.2"
+version = "0.1.3"
 
 [dependencies]
-webots-bindings = {path = "webots-bindings", version = "0.1.1"}
+webots-bindings = {path = "webots-bindings", version = "0.1.2"}
