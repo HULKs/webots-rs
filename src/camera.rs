@@ -1,5 +1,6 @@
 use std::{ffi::CString, slice::from_raw_parts};
 
+use anyhow::bail;
 use webots_bindings::{
     wb_camera_disable, wb_camera_enable, wb_camera_get_exposure, wb_camera_get_focal_distance,
     wb_camera_get_focal_length, wb_camera_get_fov, wb_camera_get_height, wb_camera_get_image,
@@ -34,12 +35,15 @@ impl Camera {
         unsafe { wb_camera_get_sampling_period(self.0) }
     }
 
-    pub fn get_image(&self) -> &[u8] {
+    pub fn get_image(&self) -> anyhow::Result<&[u8]> {
         let width = self.get_width();
         let height = self.get_height();
         unsafe {
             let image = wb_camera_get_image(self.0);
-            from_raw_parts(image, (width * height * 4) as usize)
+            if image.is_null() {
+                bail!("Failed to get image: image data is NULL");
+            }
+            Ok(from_raw_parts(image, (width * height * 4) as usize))
         }
     }
 

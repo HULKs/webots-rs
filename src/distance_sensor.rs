@@ -1,5 +1,6 @@
 use std::slice::from_raw_parts;
 
+use anyhow::bail;
 use webots_bindings::{
     wb_device_get_node_type, wb_distance_sensor_disable, wb_distance_sensor_enable,
     wb_distance_sensor_get_aperture, wb_distance_sensor_get_lookup_table,
@@ -53,11 +54,14 @@ impl DistanceSensor {
         unsafe { wb_distance_sensor_get_lookup_table_size(self.0) }
     }
 
-    pub fn get_lookup_table(&self) -> &[f64] {
+    pub fn get_lookup_table(&self) -> anyhow::Result<&[f64]> {
         let lookup_table_size = self.get_lookup_table_size();
         unsafe {
             let lookup_table = wb_distance_sensor_get_lookup_table(self.0);
-            from_raw_parts(lookup_table, lookup_table_size as usize)
+            if lookup_table.is_null() {
+                bail!("Failed to get lookup table: lookup table data is NULL");
+            }
+            Ok(from_raw_parts(lookup_table, lookup_table_size as usize))
         }
     }
 

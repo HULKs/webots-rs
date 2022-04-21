@@ -3,6 +3,7 @@ use std::{
     slice::from_raw_parts,
 };
 
+use anyhow::bail;
 use webots_bindings::{
     wb_camera_recognition_disable, wb_camera_recognition_disable_segmentation,
     wb_camera_recognition_enable, wb_camera_recognition_enable_segmentation,
@@ -53,13 +54,16 @@ impl Recognition {
         unsafe { wb_camera_recognition_get_number_of_objects(self.0) }
     }
 
-    pub fn get_objects<'a>(&self) -> Vec<RecognitionObject<'a>> {
+    pub fn get_objects<'a>(&self) -> anyhow::Result<Vec<RecognitionObject<'a>>> {
         let number_of_objects = self.get_number_of_objects();
         let objects = unsafe {
             let objects = wb_camera_recognition_get_objects(self.0);
+            if objects.is_null() {
+                bail!("Failed to get objects: objects data is NULL");
+            }
             from_raw_parts(objects, number_of_objects as usize)
         };
-        objects
+        Ok(objects
             .iter()
             .map(|object| RecognitionObject {
                 id: object.id,
@@ -74,7 +78,7 @@ impl Recognition {
                     .to_str()
                     .expect("CStr::to_str"),
             })
-            .collect()
+            .collect())
     }
 
     pub fn has_segmentation(&self) -> bool {
