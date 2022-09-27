@@ -5,8 +5,8 @@ exclude = ["/webots", "!/webots/Makefile", "!/webots/include", "!/webots/lib/con
 homepage = "https://github.com/HULKs/webots-rs"
 license = "MIT"
 name = "webots-bindings"
-version = "0.3.0"
+version = "0.5.0"
 
 [build-dependencies]
-bindgen = "0.59"
+bindgen = "0.60"
 walkdir = "2.3.2"
