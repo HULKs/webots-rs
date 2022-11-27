@@ -1,10 +1,18 @@
-use anyhow::bail;
+use thiserror::Error;
 use webots_bindings::{
     wb_device_get_node_type, wb_inertial_unit_disable, wb_inertial_unit_enable,
     wb_inertial_unit_get_noise, wb_inertial_unit_get_quaternion,
     wb_inertial_unit_get_roll_pitch_yaw, wb_inertial_unit_get_sampling_period, WbDeviceTag,
     WbNodeType_WB_NODE_INERTIAL_UNIT,
 };
+
+#[derive(Debug, Error)]
+pub enum InertialUnitError {
+    #[error("failed to get roll/pitch/yaw: roll/pitch/yaw data is NULL")]
+    RollPitchYawDataIsNull,
+    #[error("failed to get quaternion: quaternion data is NULL")]
+    QuaternionDataIsNull,
+}
 
 pub struct InertialUnit(WbDeviceTag);
 
@@ -32,11 +40,11 @@ impl InertialUnit {
         unsafe { wb_inertial_unit_get_noise(self.0) }
     }
 
-    pub fn get_roll_pitch_yaw(&self) -> anyhow::Result<[f64; 3]> {
+    pub fn get_roll_pitch_yaw(&self) -> Result<[f64; 3], InertialUnitError> {
         unsafe {
             let roll_pitch_yaw = wb_inertial_unit_get_roll_pitch_yaw(self.0);
             if roll_pitch_yaw.is_null() {
-                bail!("Failed to get roll/pitch/yaw: roll/pitch/yaw data is NULL");
+                return Err(InertialUnitError::RollPitchYawDataIsNull);
             }
             Ok([
                 *roll_pitch_yaw.offset(0),
@@ -46,11 +54,11 @@ impl InertialUnit {
         }
     }
 
-    pub fn get_quaternion(&self) -> anyhow::Result<[f64; 4]> {
+    pub fn get_quaternion(&self) -> Result<[f64; 4], InertialUnitError> {
         unsafe {
             let quaternion = wb_inertial_unit_get_quaternion(self.0);
             if quaternion.is_null() {
-                bail!("Failed to get quaternion: quaternion data is NULL");
+                return Err(InertialUnitError::QuaternionDataIsNull);
             }
             Ok([
                 *quaternion.offset(0),

@@ -3,7 +3,7 @@ use std::{
     slice::from_raw_parts,
 };
 
-use anyhow::bail;
+use thiserror::Error;
 use webots_bindings::{
     wb_camera_recognition_disable, wb_camera_recognition_disable_segmentation,
     wb_camera_recognition_enable, wb_camera_recognition_enable_segmentation,
@@ -15,6 +15,12 @@ use webots_bindings::{
 };
 
 use crate::Camera;
+
+#[derive(Debug, Error)]
+pub enum RecognitionError {
+    #[error("failed to get objects: objects data is NULL")]
+    ObjectsDataIsNull,
+}
 
 pub struct RecognitionObject<'a> {
     pub id: i32,
@@ -54,12 +60,12 @@ impl Recognition {
         unsafe { wb_camera_recognition_get_number_of_objects(self.0) }
     }
 
-    pub fn get_objects<'a>(&self) -> anyhow::Result<Vec<RecognitionObject<'a>>> {
+    pub fn get_objects<'a>(&self) -> Result<Vec<RecognitionObject<'a>>, RecognitionError> {
         let number_of_objects = self.get_number_of_objects();
         let objects = unsafe {
             let objects = wb_camera_recognition_get_objects(self.0);
             if objects.is_null() {
-                bail!("Failed to get objects: objects data is NULL");
+                return Err(RecognitionError::ObjectsDataIsNull);
             }
             from_raw_parts(objects, number_of_objects as usize)
         };

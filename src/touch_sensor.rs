@@ -1,6 +1,6 @@
 use std::slice::from_raw_parts;
 
-use anyhow::bail;
+use thiserror::Error;
 use webots_bindings::{
     wb_device_get_node_type, wb_touch_sensor_disable, wb_touch_sensor_enable,
     wb_touch_sensor_get_lookup_table, wb_touch_sensor_get_lookup_table_size,
@@ -9,6 +9,14 @@ use webots_bindings::{
 };
 
 use crate::TouchSensorType;
+
+#[derive(Debug, Error)]
+pub enum TouchSensorError {
+    #[error("failed to get values: value data is NULL")]
+    ValueIsNull,
+    #[error("failed to get lookup table: lookup table data is NULL")]
+    LookupTableIsNull,
+}
 
 pub struct TouchSensor(WbDeviceTag);
 
@@ -36,11 +44,11 @@ impl TouchSensor {
         unsafe { wb_touch_sensor_get_value(self.0) }
     }
 
-    pub fn get_values(&self) -> anyhow::Result<[f64; 3]> {
+    pub fn get_values(&self) -> Result<[f64; 3], TouchSensorError> {
         unsafe {
             let values = wb_touch_sensor_get_values(self.0);
             if values.is_null() {
-                bail!("Failed to get values: value data is NULL");
+                return Err(TouchSensorError::ValueIsNull);
             }
             Ok([*values.offset(0), *values.offset(1), *values.offset(2)])
         }
@@ -50,12 +58,12 @@ impl TouchSensor {
         unsafe { wb_touch_sensor_get_lookup_table_size(self.0) }
     }
 
-    pub fn get_lookup_table(&self) -> anyhow::Result<&[f64]> {
+    pub fn get_lookup_table(&self) -> Result<&[f64], TouchSensorError> {
         let lookup_table_size = self.get_lookup_table_size();
         unsafe {
             let lookup_table = wb_touch_sensor_get_lookup_table(self.0);
             if lookup_table.is_null() {
-                bail!("Failed to get lookup table: lookup table data is NULL");
+                return Err(TouchSensorError::LookupTableIsNull);
             }
             Ok(from_raw_parts(lookup_table, lookup_table_size as usize))
         }
