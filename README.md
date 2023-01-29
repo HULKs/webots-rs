@@ -8,7 +8,7 @@ This is a reference project that shows how to build controllers for the [Webots 
 
 1. Download and install [Webots](https://cyberbotics.com) for your operating system
 1. Install [Rust](https://www.rust-lang.org/learn/get-started) if you haven't already
-1. Clone this repository
+1. Clone this repository recursivly (with submodules)
 1. Run `make` to compile the Rust controller and copy it into place
 1. Open the `sample_project/worlds/my_first_simulation.wbt` file in Webots
 1. Run the simulation
