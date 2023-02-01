@@ -27,7 +27,7 @@ pub use joint_type::JointType;
 pub use keyboard::Keyboard;
 pub use motor::Motor;
 pub use position_sensor::PositionSensor;
-pub use receiver::Receiver;
+pub use receiver::{Packet, Receiver};
 pub use recognition::{Recognition, RecognitionObject};
 pub use robot::Robot;
 pub use robot_mode::RobotMode;
